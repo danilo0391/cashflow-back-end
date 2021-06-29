@@ -17,7 +17,9 @@ import java.util.Set;
 import java.util.TreeSet;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://cashflow-app-bcc.herokuapp.com")
+//@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/api")
 public class ExpenseController {
 
