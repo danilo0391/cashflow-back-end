@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface ExpenseRespository extends JpaRepository<Expense, Long> {
 
-    @Query("FROM Expense b WHERE b.date LIKE %:searchText% OR b.value LIKE %:searchText% OR b.category LIKE %:searchText% ORDER BY b.value DESC")
+    @Query("FROM Expense b WHERE b.date LIKE %:searchText% OR b.value LIKE %:searchText% " +
+            "OR b.category LIKE %:searchText% OR b.id LIKE %:searchText% ORDER BY b.value DESC")
     Page<Expense> findAll(Pageable pageable, @Param("searchText")String searchText);
 }

@@ -5,7 +5,9 @@ import com.finalproject.cashflow.model.Expense;
 import com.finalproject.cashflow.repository.ExpenseRespository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,8 +20,6 @@ import java.util.TreeSet;
 
 @RestController
 @CrossOrigin(origins = "https://cashflow-app-bcc.herokuapp.com")
-//@CrossOrigin(origins = "http://localhost:3000")
-//@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/api")
 public class ExpenseController {
 
@@ -32,10 +32,21 @@ public class ExpenseController {
         return new ResponseEntity<>(expenseRespository.findAll(pageable, searchText), HttpStatus.OK);
     }
 
-    @GetMapping("/expenses")
+    @GetMapping("/expenses/default")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public List<Expense> getAllExpense(){
         return expenseRespository.findAll();
+    }
+
+    @GetMapping("/expenses")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public ResponseEntity<Page<Expense>> getAllExpense(int pageNumber, int pageSize, String sortBy, String sortDir){
+        return new ResponseEntity<>(expenseRespository.findAll(
+                PageRequest.of(
+                        pageNumber, pageSize,
+                        sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending()
+                )
+        ), HttpStatus.OK);
     }
 
     @GetMapping("/expenses/{id}")

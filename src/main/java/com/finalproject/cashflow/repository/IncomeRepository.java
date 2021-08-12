@@ -9,7 +9,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface IncomeRepository extends JpaRepository <Income, Long>{
 
-    @Query("FROM Income b WHERE b.date LIKE %:searchText% OR b.value LIKE %:searchText% OR b.category LIKE %:searchText% ORDER BY b.value DESC")
+    @Query("FROM Income b WHERE b.date LIKE %:searchText% OR b.value LIKE %:searchText% " +
+            "OR b.category LIKE %:searchText% OR b.id LIKE %:searchText% ORDER BY b.value DESC")
     Page<Income> findAll(Pageable pageable, @Param("searchText")String searchText);
 
 }

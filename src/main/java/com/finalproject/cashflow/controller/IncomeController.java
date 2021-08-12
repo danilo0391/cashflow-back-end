@@ -5,7 +5,9 @@ import com.finalproject.cashflow.model.Income;
 import com.finalproject.cashflow.repository.IncomeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,8 +20,6 @@ import java.util.TreeSet;
 
 @RestController
 @CrossOrigin(origins = "https://cashflow-app-bcc.herokuapp.com")
-//@CrossOrigin(origins = "http://localhost:3000")
-//@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/api")
 public class IncomeController {
 
@@ -32,14 +32,24 @@ public class IncomeController {
         return new ResponseEntity<>(incomeRepository.findAll(pageable, searchText), HttpStatus.OK);
     }
 
-    @GetMapping("/incomes")
+    @GetMapping("/incomes/default")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public List<Income> getAllIncome(){
         return incomeRepository.findAll();
     }
 
+    @GetMapping("/incomes")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public ResponseEntity<Page<Income>> getAllIncome(int pageNumber, int pageSize, String sortBy, String sortDir){
+        return new ResponseEntity<>(incomeRepository.findAll(
+                PageRequest.of(
+                        pageNumber, pageSize,
+                        sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending()
+                )
+        ), HttpStatus.OK);
+    }
+
     @GetMapping("/incomes/{id}")
-//    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public Income getIncome(@PathVariable(value = "id") Long id){
 
         return incomeRepository.findById(id).orElseThrow(
