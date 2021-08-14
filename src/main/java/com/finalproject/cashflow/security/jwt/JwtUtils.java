@@ -20,6 +20,7 @@ public class JwtUtils {
     @Value("${cashflow.app.jwtExpirationMs}")
     private int jwtExpirationMs;
 
+    //Method to generate the JWT Token
     public String generateJwtToken(Authentication authentication) {
 
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();

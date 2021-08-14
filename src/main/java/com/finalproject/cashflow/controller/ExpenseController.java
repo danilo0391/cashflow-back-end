@@ -19,27 +19,30 @@ import java.util.Set;
 import java.util.TreeSet;
 
 @RestController
-@CrossOrigin(origins = "https://cashflow-app-bcc.herokuapp.com")
+@CrossOrigin(origins = "https://cashflow-app-bcc.herokuapp.com") //Allows data from the client side
 @RequestMapping("/api")
 public class ExpenseController {
 
     @Autowired
     private ExpenseRespository expenseRespository;
 
+    //Method to get all expenses by the use of the search
     @GetMapping("/expenses/search/{searchText}")
-    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")//Set the roles can request this method
     public ResponseEntity<Page<Expense>> findAll(Pageable pageable, @PathVariable String searchText) {
         return new ResponseEntity<>(expenseRespository.findAll(pageable, searchText), HttpStatus.OK);
     }
 
+    //Method to get all expenses
     @GetMapping("/expenses/default")
-    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')") //Set the roles can request this method
     public List<Expense> getAllExpense(){
         return expenseRespository.findAll();
     }
 
+    //Method to get all expenses by sort
     @GetMapping("/expenses")
-    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")//Set the roles can request this method
     public ResponseEntity<Page<Expense>> getAllExpense(int pageNumber, int pageSize, String sortBy, String sortDir){
         return new ResponseEntity<>(expenseRespository.findAll(
                 PageRequest.of(
@@ -49,22 +52,25 @@ public class ExpenseController {
         ), HttpStatus.OK);
     }
 
+    //Method to get expenses by id
     @GetMapping("/expenses/{id}")
-    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")//Set the roles can request this method
     public Expense getExpenseById(@PathVariable(value = "id") Long id){
         return expenseRespository.findById(id).orElseThrow(
                 ()-> new ResourceNotFoundException("Expense not found")
         );
     }
 
+    //Method to add an expense
     @PostMapping("/expenses")
-    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")//Set the roles can request this method
     public Expense addExpense(@RequestBody Expense expense){
         return expenseRespository.save(expense);
     }
 
+    //Method to update an expense
     @PutMapping("/expenses/{id}")
-    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")//Set the roles can request this method
     public Expense updateExpense(@RequestBody Expense newExpense, @PathVariable(value = "id") Long id){
         return expenseRespository.findById(id)
                 .map(expense -> {
@@ -80,8 +86,9 @@ public class ExpenseController {
                 });
     }
 
+    //Method to delete and expense
     @DeleteMapping("expenses/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")//Set the roles can request this method
     public void deleteExpense(@PathVariable(value = "id") Long id){
         Expense expense = expenseRespository.findById(id).orElseThrow(
                 ()-> new ResourceNotFoundException("Expense not found")
@@ -89,8 +96,9 @@ public class ExpenseController {
         expenseRespository.delete(expense);
     }
 
+    //Method to get all expense categories
     @GetMapping("/expenses/categories")
     public ResponseEntity<Set<String>> findAllCategories(){
-        return new ResponseEntity<>(new TreeSet<>(Arrays.asList("Liturgy Stuff", "Music Equipment", "Family Group", "Cleaning Materials", "Other")), HttpStatus.OK);
+        return new ResponseEntity<>(new TreeSet<>(Arrays.asList("Liturgy Stuff", "Music Equipment", "Family Group", "Cleaning Materials", "Other")), HttpStatus.OK); //The categories are being set in the array as a list
     }
 }

@@ -19,27 +19,29 @@ import java.util.Set;
 import java.util.TreeSet;
 
 @RestController
-@CrossOrigin(origins = "https://cashflow-app-bcc.herokuapp.com")
+@CrossOrigin(origins = "https://cashflow-app-bcc.herokuapp.com")//Allows data from the client side
 @RequestMapping("/api")
 public class IncomeController {
 
     @Autowired
     private IncomeRepository incomeRepository;
 
+    //Method to get all incomes by the use of the search
     @GetMapping("/incomes/search/{searchText}")
-    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")//Set the roles can request this method
     public ResponseEntity<Page<Income>> findAll(Pageable pageable, @PathVariable String searchText) {
         return new ResponseEntity<>(incomeRepository.findAll(pageable, searchText), HttpStatus.OK);
     }
-
+    //Method to get all incomes
     @GetMapping("/incomes/default")
-    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")//Set the roles can request this method
     public List<Income> getAllIncome(){
         return incomeRepository.findAll();
     }
 
+    //Method to get all incomes by sort
     @GetMapping("/incomes")
-    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")//Set the roles can request this method
     public ResponseEntity<Page<Income>> getAllIncome(int pageNumber, int pageSize, String sortBy, String sortDir){
         return new ResponseEntity<>(incomeRepository.findAll(
                 PageRequest.of(
@@ -49,6 +51,7 @@ public class IncomeController {
         ), HttpStatus.OK);
     }
 
+    //Method to get incomes by id
     @GetMapping("/incomes/{id}")
     public Income getIncome(@PathVariable(value = "id") Long id){
 
@@ -57,14 +60,16 @@ public class IncomeController {
         );
     }
 
+    //Method to add an incomes
     @PostMapping("/incomes")
-    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")//Set the roles can request this method
     public Income saveIncome(@RequestBody Income income){
         return incomeRepository.save(income);
     }
 
+    //Method to update an income
     @PutMapping("/incomes/{id}")
-    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")//Set the roles can request this method
     public Income updateIncome(@RequestBody Income newIncome, @PathVariable(value = "id") Long id){
         return incomeRepository.findById(id)
                 .map(income -> {
@@ -80,8 +85,9 @@ public class IncomeController {
                 });
     }
 
+    //Method to delete and expense
     @DeleteMapping("incomes/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")//Set the roles can request this method
     public void removeIncome(@PathVariable(value = "id") Long id){
         Income income = incomeRepository.findById(id).orElseThrow(
                 ()-> new ResourceNotFoundException("Income not found")
@@ -89,6 +95,7 @@ public class IncomeController {
         incomeRepository.delete(income);
     }
 
+    //Method to get all incomes categories
     @GetMapping("/incomes/categories")
     public ResponseEntity<Set<String>> findAllCategories(){
         return new ResponseEntity<>(new TreeSet<>(Arrays.asList("Donation", "Mass Offer", "Selling Actions")), HttpStatus.OK);

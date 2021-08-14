@@ -26,8 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "https://cashflow-app-bcc.herokuapp.com")
-//@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "https://cashflow-app-bcc.herokuapp.com")//Allows data from the client side
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -47,6 +46,7 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
+    //Method the allows to signin the application
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
@@ -68,6 +68,7 @@ public class AuthController {
                 roles));
     }
 
+    //Method to create a new user in the application
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {

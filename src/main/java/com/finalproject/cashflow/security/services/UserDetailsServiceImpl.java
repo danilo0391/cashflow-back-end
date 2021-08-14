@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
+//This class is responsable to load User by username and returns a UserDetails object that will be used for Spring Security
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired

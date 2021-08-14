@@ -9,9 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-//@CrossOrigin(origins = "http://localhost:3000")
 @CrossOrigin(origins = "https://cashflow-app-bcc.herokuapp.com")
-//@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/")
 public class UserController {
@@ -19,14 +17,16 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    //Method to get all users
     @GetMapping("/users")
-   @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+   @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")//Set the roles can request this method
     public List<User> getAllUsers(){
         return userRepository.findAll();
     }
 
+    //Method to get all users by id
     @GetMapping("/users/{id}")
-    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")//Set the roles can request this method
     public User getUser(@PathVariable(value = "id") Long id){
 
         return userRepository.findById(id).orElseThrow(
@@ -34,14 +34,16 @@ public class UserController {
         );
     }
 
+    //Method to add a new user
     @PostMapping("/users")
-    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")//Set the roles can request this method
     public User saveUser(@RequestBody User user){
         return userRepository.save(user);
     }
 
+    //Method to update a user
     @PutMapping("/users/{id}")
-    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")//Set the roles can request this method
     public User updateUser(@RequestBody User newUser, @PathVariable(value = "id") Long id){
         return userRepository.findById(id)
                 .map(user -> {
@@ -56,8 +58,9 @@ public class UserController {
                 });
     }
 
+    //Method to delete a user
     @DeleteMapping("users/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")//Set the roles can request this method
     public void removeUser(@PathVariable(value = "id") Long id){
         User user = userRepository.findById(id).orElseThrow(
                 ()-> new ResourceNotFoundException("User not found")
